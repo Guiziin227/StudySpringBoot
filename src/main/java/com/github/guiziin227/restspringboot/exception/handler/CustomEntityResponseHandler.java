@@ -1,5 +1,6 @@
 package com.github.guiziin227.restspringboot.exception.handler;
 
+import com.github.guiziin227.restspringboot.exception.BadRequestException;
 import com.github.guiziin227.restspringboot.exception.ExceptionResponse;
 import com.github.guiziin227.restspringboot.exception.FileNotFoundException;
 import com.github.guiziin227.restspringboot.exception.FileStorageException;
@@ -40,7 +41,7 @@ public class CustomEntityResponseHandler extends ResponseEntityExceptionHandler 
     }
 
 
-    @ExceptionHandler(RequiredObjectIsNullException.class)
+    @ExceptionHandler({RequiredObjectIsNullException.class, BadRequestException.class})
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
