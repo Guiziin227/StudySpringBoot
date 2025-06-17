@@ -36,7 +36,7 @@ public class XlsxImporter implements FileImporter {
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            if (row.getCell(0) != null && row.getCell(0).getCellType() == CellType.BLANK) {
+            if (row.getCell(0) != null && row.getCell(0).getCellType() != CellType.BLANK) {
                 PersonDTO personDTO = new PersonDTO();
                 personDTO.setFirstName(row.getCell(0).getStringCellValue());
                 personDTO.setLastName(row.getCell(1).getStringCellValue());
