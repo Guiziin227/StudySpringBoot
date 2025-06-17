@@ -188,6 +188,8 @@ public class PersonService {
         dto.add(linkTo(methodOn(PersonController.class).findAll(0,10,"asc")).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).findByName("", 0, 10, "asc"))
                 .withRel("findByName").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class)).slash("massCreation")
+                .withRel("massCreation").withType("POST"));
         dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(PersonController.class).disablePerson(dto.getId())).withRel("disable").withType("PATCH"));
