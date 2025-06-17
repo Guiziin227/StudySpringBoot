@@ -9,6 +9,9 @@ import com.github.guiziin227.restspringboot.exception.BadRequestException;
 import com.github.guiziin227.restspringboot.exception.FileStorageException;
 import com.github.guiziin227.restspringboot.exception.RequiredObjectIsNullException;
 import com.github.guiziin227.restspringboot.exception.ResourceNotFoundException;
+import com.github.guiziin227.restspringboot.file.exporter.MediaTypes;
+import com.github.guiziin227.restspringboot.file.exporter.contract.FileExporter;
+import com.github.guiziin227.restspringboot.file.exporter.factory.FileExporterFactory;
 import com.github.guiziin227.restspringboot.file.importer.contract.FileImporter;
 import com.github.guiziin227.restspringboot.file.importer.factory.FileImporterFactory;
 import com.github.guiziin227.restspringboot.model.Person;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -50,6 +54,8 @@ public class PersonService {
     private PersonMapper personMapper;
 
     private final FileImporterFactory fileImporter;
+
+    private final FileExporterFactory fileExporter;
 
     @Autowired
     PagedResourcesAssembler<PersonDTO> assembler;
@@ -114,6 +120,24 @@ public class PersonService {
 
         return buildPagedModel(pageable, people);
 
+    }
+
+    @Transactional
+    public Resource exportPage(Pageable pageable, String acceptHeader) {
+        logger.info("Export a people page!");
+
+        var people = personRepository.findAll(pageable).map(
+                person -> parseObject(person, PersonDTO.class)
+                ).getContent();
+
+        try{
+            FileExporter exporter = this.fileExporter.getFileExporter(acceptHeader);
+
+            return exporter.exportFile(people);
+        } catch (Exception e) {
+            logger.error("Error exporting file: " + e.getMessage(), e);
+            throw new FileStorageException("Error exporting file: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -194,6 +218,8 @@ public class PersonService {
         dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(PersonController.class).disablePerson(dto.getId())).withRel("disable").withType("PATCH"));
         dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
+        dto.add(linkTo(methodOn(PersonController.class).exportPage(0, 10, "asc", MediaTypes.APPLICATION_XLSX))
+                .withRel("exportPage").withType("GET"));
     }
 
 }
