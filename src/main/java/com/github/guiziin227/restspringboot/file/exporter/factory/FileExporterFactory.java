@@ -1,6 +1,7 @@
 package com.github.guiziin227.restspringboot.file.exporter.factory;
 
 import com.github.guiziin227.restspringboot.exception.BadRequestException;
+import com.github.guiziin227.restspringboot.file.exporter.MediaTypes;
 import com.github.guiziin227.restspringboot.file.exporter.contract.FileExporter;
 import com.github.guiziin227.restspringboot.file.exporter.impl.CsvExporter;
 import com.github.guiziin227.restspringboot.file.exporter.impl.XlsxExporter;
@@ -23,17 +24,17 @@ public class FileExporterFactory {
     private ApplicationContext applicationContext;
 
     //usando o padrao de projeto Factory Method
-    public FileExporter getFileExporter(String fileName) {
+    public FileExporter getFileExporter(String acceptHeader) {
         logger.info("Criando o FileExporter");
-        if (fileName.endsWith(".xlsx")) {
+        if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_XLSX)) {
             logger.info("Criando o XlsxExporter");
             return applicationContext.getBean(XlsxExporter.class);
             //return new XlsxExporter();
-        } else if (fileName.endsWith(".csv")) {
+        } else if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_CSV)) {
             logger.info("Criando o CsvExporter");
             return applicationContext.getBean( CsvExporter.class);
         } else {
-            logger.error("Tipo de arquivo não suportado: {}", fileName);
+            logger.error("Tipo de arquivo não suportado: {}", acceptHeader);
             throw new BadRequestException();
         }
 
