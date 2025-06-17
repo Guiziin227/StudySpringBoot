@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -50,6 +51,21 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
     @Override
     public PersonDTO create(@RequestBody PersonDTO person) {
         return personService.create(person);
+    }
+
+    @PostMapping(
+            value = "/massCreation",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_YAML_VALUE
+            }
+    )
+    @Override
+    public List<PersonDTO> massCreation(
+           @RequestParam("file") MultipartFile file
+    ) {
+        return personService.massCreation(file);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -110,7 +126,7 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
         Sort sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.by(Sort.Direction.DESC, "firstName") : Sort.by(Sort.Direction.ASC, "firstName");
 
         Pageable pageable = PageRequest.of(page, size, sortDirection);
-        return ResponseEntity.ok(personService.findByName(firstName,pageable));
+        return ResponseEntity.ok(personService.findByName(firstName, pageable));
     }
 
 
