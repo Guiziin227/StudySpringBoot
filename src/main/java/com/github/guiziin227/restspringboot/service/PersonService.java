@@ -5,12 +5,18 @@ import com.github.guiziin227.restspringboot.dto.mapper.custom.PersonMapper;
 import com.github.guiziin227.restspringboot.dto.PersonDTO;
 import static com.github.guiziin227.restspringboot.dto.mapper.ObjectMapper.parseObject;
 
+import com.github.guiziin227.restspringboot.exception.BadRequestException;
+import com.github.guiziin227.restspringboot.exception.FileStorageException;
 import com.github.guiziin227.restspringboot.exception.RequiredObjectIsNullException;
 import com.github.guiziin227.restspringboot.exception.ResourceNotFoundException;
+import com.github.guiziin227.restspringboot.file.importer.contract.FileImporter;
+import com.github.guiziin227.restspringboot.file.importer.factory.FileImporterFactory;
 import com.github.guiziin227.restspringboot.model.Person;
 import com.github.guiziin227.restspringboot.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -24,21 +30,26 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Optional;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PersonService {
 
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(PersonService.class);
 
     private final PersonRepository personRepository;
 
     @Autowired
     private PersonMapper personMapper;
+
+    private final FileImporterFactory fileImporter;
 
     @Autowired
     PagedResourcesAssembler<PersonDTO> assembler;
@@ -103,6 +114,39 @@ public class PersonService {
 
         return buildPagedModel(pageable, people);
 
+    }
+
+    @Transactional
+    public List<PersonDTO> massCreation(MultipartFile file) {
+        logger.info("Importing people from file!");
+
+        if (file.isEmpty()){
+            throw new BadRequestException("It is not allowed to persist a null object!");
+        }
+
+        try(InputStream inputStream = file.getInputStream()){
+            String fileName = Optional.ofNullable(file.getOriginalFilename()).orElseThrow(
+                    () -> new BadRequestException("File name is null or empty")
+            );
+
+            FileImporter importer = this.fileImporter.getFileImporter(fileName);
+
+            List<Person> entities = importer.importFile(inputStream).stream()
+                    .map(dto -> personRepository.save(parseObject(dto, Person.class)))
+                    .toList();
+
+            return entities.stream().map(
+                    person ->{
+                        PersonDTO dto = parseObject(person, PersonDTO.class);
+                        addHateoasLinks(dto);
+                        return dto;
+                    }
+            ).toList();
+
+        }catch (Exception e) {
+            logger.error("Error processing file: " + e.getMessage(), e);
+            throw new FileStorageException("Error processing file: " + e.getMessage());
+        }
     }
 
     @Transactional
