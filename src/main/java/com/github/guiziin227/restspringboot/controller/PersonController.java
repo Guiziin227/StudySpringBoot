@@ -1,15 +1,19 @@
 package com.github.guiziin227.restspringboot.controller;
 
 import com.github.guiziin227.restspringboot.dto.PersonDTO;
+import com.github.guiziin227.restspringboot.file.exporter.MediaTypes;
 import com.github.guiziin227.restspringboot.service.PersonService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -63,10 +67,11 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
     )
     @Override
     public List<PersonDTO> massCreation(
-           @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file
     ) {
         return personService.massCreation(file);
     }
+
 
     @DeleteMapping(value = "/{id}")
     @Override
@@ -92,6 +97,7 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
         return personService.findById(id);
     }
 
+
     @GetMapping(
             produces = {
                     MediaType.APPLICATION_JSON_VALUE,
@@ -109,6 +115,38 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
         Pageable pageable = PageRequest.of(page, size, sortDirection);
         return ResponseEntity.ok(personService.findAll(pageable));
     }
+
+    @GetMapping(
+            value = "/exportPage",
+            produces = {
+                    MediaTypes.APPLICATION_CSV,
+                    MediaTypes.APPLICATION_XLSX
+            })
+    @Override
+    public ResponseEntity<Resource> exportPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+            HttpServletRequest request
+    ) {
+
+        Sort sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.by(Sort.Direction.DESC, "firstName") : Sort.by(Sort.Direction.ASC, "firstName");
+        Pageable pageable = PageRequest.of(page, size, sortDirection);
+
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+
+        Resource resource = personService.exportPage(pageable, acceptHeader);
+
+        String contentType = acceptHeader != null ? acceptHeader : "application/octet-stream";
+        String fileExtension = contentType.equals(MediaTypes.APPLICATION_CSV) ? ".csv" : ".xlsx";
+        String fileName = "people_export" + fileExtension;
+
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
+
+    }
+
 
     @GetMapping(value = "/findByName/{firstName}",
             produces = {
