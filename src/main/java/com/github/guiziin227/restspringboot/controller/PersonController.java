@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/person/v1")
@@ -120,7 +121,8 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
             value = "/exportPage",
             produces = {
                     MediaTypes.APPLICATION_CSV,
-                    MediaTypes.APPLICATION_XLSX
+                    MediaTypes.APPLICATION_XLSX,
+                    MediaTypes.APPLICATION_PDF,
             })
     @Override
     public ResponseEntity<Resource> exportPage(
@@ -137,8 +139,14 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
 
         Resource resource = personService.exportPage(pageable, acceptHeader);
 
+        Map<String, String> extensionMap = Map.of(
+                MediaTypes.APPLICATION_CSV, ".csv",
+                MediaTypes.APPLICATION_XLSX, ".xlsx",
+                MediaTypes.APPLICATION_PDF, ".pdf"
+        );
+
+        String filename = extensionMap.getOrDefault(acceptHeader,"");
         String contentType = acceptHeader != null ? acceptHeader : "application/octet-stream";
-        String fileExtension = contentType.equals(MediaTypes.APPLICATION_CSV) ? ".csv" : ".xlsx";
         String fileName = "people_export" + fileExtension;
 
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
