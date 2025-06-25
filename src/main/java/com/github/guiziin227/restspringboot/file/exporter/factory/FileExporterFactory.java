@@ -32,7 +32,10 @@ public class FileExporterFactory {
             //return new XlsxExporter();
         } else if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_CSV)) {
             logger.info("Criando o CsvExporter");
-            return applicationContext.getBean( CsvExporter.class);
+            return applicationContext.getBean(CsvExporter.class);
+        } else if (acceptHeader.equalsIgnoreCase(MediaTypes.APPLICATION_PDF)) {
+            logger.info("Criando o PdfExporter");
+            return applicationContext.getBean(CsvExporter.class);
         } else {
             logger.error("Tipo de arquivo não suportado: {}", acceptHeader);
             throw new BadRequestException();
