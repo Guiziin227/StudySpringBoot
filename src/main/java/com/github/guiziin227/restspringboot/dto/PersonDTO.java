@@ -89,6 +89,10 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
         this.gender = gender;
     }
 
+    public String getName(){
+        return (firstName != null) ? firstName : "" + (lastName != null ? " " + lastName : "");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
