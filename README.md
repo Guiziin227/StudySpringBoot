@@ -39,40 +39,6 @@ Uma API REST robusta desenvolvida com Spring Boot para gerenciamento de pessoas,
 - MySQL 8.0+
 - IDE de sua preferência (IntelliJ IDEA, Eclipse, VS Code)
 
-## 🔧 Configuração
-
-### 1. Clone o repositório
-```bash
-git clone <url-do-repositorio>
-cd restSpringBoot
-```
-
-### 2. Configure o banco de dados
-Crie um banco de dados MySQL:
-```sql
-CREATE DATABASE study_schema;
-CREATE USER 'weber'@'localhost' IDENTIFIED BY 'guiebiju';
-GRANT ALL PRIVILEGES ON study_schema.* TO 'weber'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-### 3. Configure as propriedades
-Ajuste as configurações em `src/main/resources/application.yml`:
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/study_schema?useTimeZone=true&serverTimezone=UTC
-    username: weber
-    password: guiebiju
-```
-
-### 4. Execute a aplicação
-```bash
-mvn spring-boot:run
-```
-
-A aplicação estará disponível em: `http://localhost:8080`
-
 ## 📚 Documentação da API
 
 ### Swagger UI
