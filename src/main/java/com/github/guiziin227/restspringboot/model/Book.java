@@ -39,11 +39,11 @@ public class Book implements Serializable {
     @Temporal(TemporalType.DATE)
     private String launchDate;
 
-    @Column(length = 200, nullable = false)
-    private String title;
-
     @Column(nullable = false)
     private Double price;
+
+    @Column(length = 200, nullable = false)
+    private String title;
 
     @Override
     public boolean equals(Object o) {
