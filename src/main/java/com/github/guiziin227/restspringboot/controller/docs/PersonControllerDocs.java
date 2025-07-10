@@ -118,6 +118,9 @@ public interface PersonControllerDocs {
                                     ),
                                     @Content(
                                             mediaType = MediaTypes.APPLICATION_CSV
+                                    ),
+                                    @Content(
+                                            mediaType = MediaTypes.APPLICATION_PDF
                                     )
                             }),
                     @ApiResponse(description = "No content", responseCode = "204", content = @Content),
