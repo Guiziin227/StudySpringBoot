@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -104,7 +106,7 @@ public interface PersonControllerDocs {
     );
 
     @Operation(
-            summary = "Export People persons",
+            summary = "Exports a paged list of people to a file (CSV, XLSX, or PDF)",
             tags = {"People"},
             description = "Exports a page of persons in the system",
             responses = {
@@ -129,7 +131,7 @@ public interface PersonControllerDocs {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            HttpServletRequest request
+            @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader
     );
 
     @Operation(

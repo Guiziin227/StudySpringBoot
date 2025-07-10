@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -129,27 +130,21 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            HttpServletRequest request
+            @RequestHeader(value = HttpHeaders.ACCEPT) String acceptHeader
     ) {
 
-        Sort sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.by(Sort.Direction.DESC, "firstName") : Sort.by(Sort.Direction.ASC, "firstName");
+        Sort sortDirection = "desc".equalsIgnoreCase(direction)
+                ? Sort.by(Sort.Direction.DESC, "firstName")
+                : Sort.by(Sort.Direction.ASC, "firstName");
         Pageable pageable = PageRequest.of(page, size, sortDirection);
 
-        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
-
+        // O acceptHeader já foi validado pelo Spring. Passe-o para o serviço.
         Resource resource = personService.exportPage(pageable, acceptHeader);
 
-        Map<String, String> extensionMap = Map.of(
-                MediaTypes.APPLICATION_CSV, ".csv",
-                MediaTypes.APPLICATION_XLSX, ".xlsx",
-                MediaTypes.APPLICATION_PDF, ".pdf"
-        );
+        String fileName = "people_export" + getFileExtension(acceptHeader);
 
-        String fileExtension = extensionMap.getOrDefault(acceptHeader,"");
-        String contentType = acceptHeader != null ? acceptHeader : "application/octet-stream";
-        String fileName = "people_export" + fileExtension;
-
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(acceptHeader))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(resource);
 
@@ -202,4 +197,13 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
         return personService.disablePerson(id);
     }
 
+
+    private String getFileExtension(String mediaType) {
+        return switch (mediaType) {
+            case MediaTypes.APPLICATION_CSV -> ".csv";
+            case MediaTypes.APPLICATION_XLSX -> ".xlsx";
+            case MediaTypes.APPLICATION_PDF -> ".pdf";
+            default -> "";
+        };
+    }
 }
