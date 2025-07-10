@@ -145,7 +145,7 @@ public class PersonController implements com.github.guiziin227.restspringboot.co
                 MediaTypes.APPLICATION_PDF, ".pdf"
         );
 
-        String filename = extensionMap.getOrDefault(acceptHeader,"");
+        String fileExtension = extensionMap.getOrDefault(acceptHeader,"");
         String contentType = acceptHeader != null ? acceptHeader : "application/octet-stream";
         String fileName = "people_export" + fileExtension;
 
