@@ -65,4 +65,9 @@ public class XlsxExporter implements FileExporter {
         headerCellStyle.setFont(font);
         return headerCellStyle;
     }
+
+    @Override
+    public Resource exportPerson(PersonDTO person) throws Exception {
+        return null;
+    }
 }
