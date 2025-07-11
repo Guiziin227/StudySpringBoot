@@ -1,11 +1,13 @@
 package com.github.guiziin227.restspringboot.integrationtests.dto;
 
 import com.github.guiziin227.restspringboot.model.Book;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+@XmlRootElement
 public class PersonDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
