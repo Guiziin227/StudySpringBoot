@@ -4,6 +4,8 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="StudySchema"/>
 	<parameter name="PERSON_ID" class="java.lang.Long"/>
 	<parameter name="SUB_REPORT_DATA_SOURCE" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="QR_CODEIMAGE" class="java.io.InputStream"/>
+	<parameter name="SUB_REPORT_DIR" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[SELECT id,
 	CONCAT(first_name,' ',last_name) as name,
 	address,
@@ -12,7 +14,7 @@
 	wikipedia_profile_url as profileUrl,
 	photo_url as photoUrl
 FROM study_schema.person
-WHERE 
+WHERE
 	id = $P{PERSON_ID}
 ]]></query>
 	<field name="id" class="java.lang.Long">
@@ -89,24 +91,24 @@ WHERE
 		<element kind="image" uuid="68beadc3-f4e1-49e5-a922-5e0d4897f308" x="439" y="0" width="110" height="140">
 			<expression><![CDATA[$F{photoUrl}]]></expression>
 		</element>
-		<element kind="component" uuid="ebd80fed-f318-40ed-8139-07530f7006bb" x="270" y="0" width="132" height="101">
-			<component kind="barcode4j:QRCode">
-				<codeExpression><![CDATA[$F{photoUrl}]]></codeExpression>
-			</component>
+		<element kind="image" uuid="0d5cc007-cb93-42a4-a23b-400c166126fe" x="230" y="0" width="150" height="140">
+			<expression><![CDATA[$P{QR_CODEIMAGE}]]></expression>
 		</element>
 	</title>
-	<pageHeader height="35" splitType="Stretch"/>
-	<columnHeader height="61" splitType="Stretch"/>
 	<detail>
-		<band height="220" splitType="Stretch">
-			<subreport>
-				<reportElement x="0" y="10" width="555" height="200" uuid="40db8689-f751-4b16-b2f0-92ac44e4b201"/>
+		<band height="60" splitType="Stretch">
+			<element kind="subreport" uuid="34628e01-27f3-4a3a-93b4-e361cd12cab3" x="10" y="0" width="534" height="60">
 				<dataSourceExpression><![CDATA[$P{SUB_REPORT_DATA_SOURCE}]]></dataSourceExpression>
-				<subreportExpression><![CDATA["books.jasper"]]></subreportExpression>
-			</subreport>
+				<expression><![CDATA[$P{SUB_REPORT_DIR}]]></expression>
+				<parameter name="PERSON_ID">
+					<expression><![CDATA[$P{PERSON_ID}]]></expression>
+				</parameter>
+				<parameter name="SUB_REPORT_DATA_SOURCE">
+					<expression><![CDATA[$P{SUB_REPORT_DATA_SOURCE}]]></expression>
+				</parameter>
+			</element>
 		</band>
 	</detail>
-	<columnFooter height="45" splitType="Stretch"/>
 	<pageFooter height="60" splitType="Stretch">
 		<element kind="textField" uuid="b9d75451-701c-433b-b5ba-26fccf7e6ae3" x="380" y="30" width="100" height="30" hTextAlign="Right" vTextAlign="Middle">
 			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
