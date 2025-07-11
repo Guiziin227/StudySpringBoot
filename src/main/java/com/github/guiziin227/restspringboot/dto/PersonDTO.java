@@ -6,12 +6,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.github.guiziin227.restspringboot.model.Book;
 import com.github.guiziin227.restspringboot.serializer.GenderSerializer;
+import jakarta.persistence.Column;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 //@JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"})
@@ -26,20 +29,24 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
     private String firstName;
     private String lastName;
     private String address;
-
     private String gender;
     private Boolean enabled;
 
+    private String profileUrl;
+    private String photoUrl;
+    private List<Book> books;
+
 
     //@JsonInclude(JsonInclude.Include.NON_EMPTY)
-   // private String phoneNumber;
+    // private String phoneNumber;
 
     //@JsonFormat(pattern = "dd/MM/yyyy")
     //private Date birthDate;
 
-   // private String sensitiveData;
+    // private String sensitiveData;
 
-    public PersonDTO() {}
+    public PersonDTO() {
+    }
 
     public Boolean getEnabled() {
         return enabled;
@@ -89,7 +96,27 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
         this.gender = gender;
     }
 
-    public String getName(){
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public String getName() {
         return (firstName != null) ? firstName : "" + (lastName != null ? " " + lastName : "");
     }
 

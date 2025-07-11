@@ -1,6 +1,9 @@
 package com.github.guiziin227.restspringboot.integrationtests.dto;
 
+import com.github.guiziin227.restspringboot.model.Book;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 public class PersonDTO implements Serializable {
@@ -12,9 +15,12 @@ public class PersonDTO implements Serializable {
     private String firstName;
     private String lastName;
     private String address;
-
     private String gender;
     private Boolean enabled;
+
+    private String profileUrl;
+    private String photoUrl;
+    private List<Book> books;
 
     public PersonDTO() {
     }
@@ -65,6 +71,30 @@ public class PersonDTO implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 
     @Override
