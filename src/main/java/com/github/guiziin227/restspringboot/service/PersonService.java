@@ -9,7 +9,6 @@ import com.github.guiziin227.restspringboot.exception.BadRequestException;
 import com.github.guiziin227.restspringboot.exception.FileStorageException;
 import com.github.guiziin227.restspringboot.exception.RequiredObjectIsNullException;
 import com.github.guiziin227.restspringboot.exception.ResourceNotFoundException;
-import com.github.guiziin227.restspringboot.file.exporter.MediaTypes;
 import com.github.guiziin227.restspringboot.file.exporter.contract.FileExporter;
 import com.github.guiziin227.restspringboot.file.exporter.factory.FileExporterFactory;
 import com.github.guiziin227.restspringboot.file.importer.contract.FileImporter;
@@ -133,7 +132,7 @@ public class PersonService {
         try{
             FileExporter exporter = this.fileExporter.getFileExporter(acceptHeader);
 
-            return exporter.exportFile(people);
+            return exporter.exportPeople(people);
         } catch (Exception e) {
             logger.error("Error exporting file: " + e.getMessage(), e);
             throw new FileStorageException("Error exporting file: " + e.getMessage());

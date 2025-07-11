@@ -21,7 +21,7 @@ import java.util.List;
 public class XlsxExporter implements FileExporter {
 
     @Override
-    public Resource exportFile(List<PersonDTO> people) throws Exception {
+    public Resource exportPeople(List<PersonDTO> people) throws Exception {
         try(Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("People");
 

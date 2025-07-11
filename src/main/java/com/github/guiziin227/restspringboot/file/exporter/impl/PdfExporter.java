@@ -23,7 +23,7 @@ public class PdfExporter implements FileExporter {
 
 
     @Override
-    public Resource exportFile(List<PersonDTO> people) throws Exception {
+    public Resource exportPeople(List<PersonDTO> people) throws Exception {
 
         InputStream inputStream = getClass().getResourceAsStream("/templates/people.jrxml");
 
