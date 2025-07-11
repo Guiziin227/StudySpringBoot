@@ -119,6 +119,10 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
         return books;
     }
 
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
     @JsonIgnore
     public String getName() {
         return (firstName != null) ? firstName : "" + (lastName != null ? " " + lastName : "");

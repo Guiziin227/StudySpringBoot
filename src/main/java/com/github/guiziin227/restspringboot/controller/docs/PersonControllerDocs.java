@@ -80,6 +80,27 @@ public interface PersonControllerDocs {
     PersonDTO findById(@PathVariable("id") Long id);
 
     @Operation(
+            summary = "Export person by ID",
+            tags = {"People"},
+            description = "Exports a person by ID to a file (PDF)",
+            responses = {
+                    @ApiResponse(description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.APPLICATION_PDF
+                                    ),
+                            }),
+                    @ApiResponse(description = "No content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content),
+            }
+    )
+    ResponseEntity<Resource> export(@PathVariable("id") Long id, HttpServletRequest request);
+
+    @Operation(
             summary = "Find all persons",
             tags = {"People"},
             description = "Returns a list of all persons in the system",
@@ -159,7 +180,6 @@ public interface PersonControllerDocs {
     List<PersonDTO> massCreation(
             MultipartFile file
     );
-
 
 
     @Operation(
