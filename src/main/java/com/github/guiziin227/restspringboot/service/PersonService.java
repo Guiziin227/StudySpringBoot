@@ -3,6 +3,7 @@ package com.github.guiziin227.restspringboot.service;
 import com.github.guiziin227.restspringboot.controller.PersonController;
 import com.github.guiziin227.restspringboot.dto.mapper.custom.PersonMapper;
 import com.github.guiziin227.restspringboot.dto.PersonDTO;
+
 import static com.github.guiziin227.restspringboot.dto.mapper.ObjectMapper.parseObject;
 
 import com.github.guiziin227.restspringboot.exception.BadRequestException;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -75,7 +77,7 @@ public class PersonService {
     public PersonDTO update(PersonDTO person) {
         if (person == null) throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
         logger.info("Updating one person!");
-        Person p =  personRepository.findById(person.getId()).orElseThrow(
+        Person p = personRepository.findById(person.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Person not found!")
         );
 
@@ -127,9 +129,9 @@ public class PersonService {
 
         var people = personRepository.findAll(pageable).map(
                 person -> parseObject(person, PersonDTO.class)
-                ).getContent();
+        ).getContent();
 
-        try{
+        try {
             FileExporter exporter = this.fileExporter.getFileExporter(acceptHeader);
 
             return exporter.exportPeople(people);
@@ -143,11 +145,11 @@ public class PersonService {
     public List<PersonDTO> massCreation(MultipartFile file) {
         logger.info("Importing people from file!");
 
-        if (file.isEmpty()){
+        if (file.isEmpty()) {
             throw new BadRequestException("It is not allowed to persist a null object!");
         }
 
-        try(InputStream inputStream = file.getInputStream()){
+        try (InputStream inputStream = file.getInputStream()) {
             String fileName = Optional.ofNullable(file.getOriginalFilename()).orElseThrow(
                     () -> new BadRequestException("File name is null or empty")
             );
@@ -159,14 +161,14 @@ public class PersonService {
                     .toList();
 
             return entities.stream().map(
-                    person ->{
+                    person -> {
                         PersonDTO dto = parseObject(person, PersonDTO.class);
                         addHateoasLinks(dto);
                         return dto;
                     }
             ).toList();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error processing file: " + e.getMessage(), e);
             throw new FileStorageException("Error processing file: " + e.getMessage());
         }
@@ -176,10 +178,28 @@ public class PersonService {
     public PagedModel<EntityModel<PersonDTO>> findByName(String firstName, Pageable pageable) {
         logger.info("findPeopleByName!");
 
-        var people = personRepository.findPeopleByName(firstName,pageable);
+        var people = personRepository.findPeopleByName(firstName, pageable);
 
         return buildPagedModel(pageable, people);
 
+    }
+
+    @Transactional
+    public Resource exportPerson(Long id, String acceptHeader) {
+        logger.info("Export data of one person!");
+        var entity = personRepository.findById(id).map(
+                person -> parseObject(person, PersonDTO.class)
+        ).orElseThrow(
+                () -> new ResourceNotFoundException("Person not found! aqui")
+        );
+
+        try {
+            FileExporter exporter = this.fileExporter.getFileExporter(acceptHeader);
+            return exporter.exportPerson(entity);
+        } catch (Exception e) {
+            logger.error("Error exporting file: " + e.getMessage(), e);
+            throw new FileStorageException("Error exporting file: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -188,7 +208,7 @@ public class PersonService {
         var entity = personRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Person not found! aqui")
         );
-        PersonDTO dto =  parseObject(entity, PersonDTO.class);
+        PersonDTO dto = parseObject(entity, PersonDTO.class);
         addHateoasLinks(dto);
         return dto;
     }
@@ -208,7 +228,7 @@ public class PersonService {
 
     private static void addHateoasLinks(PersonDTO dto) {
         dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(PersonController.class).findAll(0,10,"asc")).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).findAll(0, 10, "asc")).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).findByName("", 0, 10, "asc"))
                 .withRel("findByName").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class)).slash("massCreation")
