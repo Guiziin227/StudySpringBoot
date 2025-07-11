@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter @EqualsAndHashCode(of = "id")
 @Entity
@@ -39,5 +40,12 @@ public class Person implements Serializable {
     @Column(nullable = false)
     private Boolean enabled;
 
+    @Column(name = "wikipedia_profile_url", length = 255)
+    private String profileUrl;
+
+    @Column(name = "photo_url", length = 255)
+    private String photoUrl;
+
+    private List<Book> books;
 
 }
