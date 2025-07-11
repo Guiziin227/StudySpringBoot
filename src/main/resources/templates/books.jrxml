@@ -17,7 +17,7 @@
     FROM book b
     JOIN person_books pb ON pb.book_id = b.id
     WHERE pb.person_id = $P{PERSON_ID}]]></query>
-	<field name="id" class="java.lang.Integer">
+	<field name="id" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
 		<property name="com.jaspersoft.studio.field.label" value="id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="book"/>
@@ -27,12 +27,12 @@
 		<property name="com.jaspersoft.studio.field.label" value="author"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="book"/>
 	</field>
-	<field name="launchDate" class="java.sql.Timestamp">
+	<field name="launchDate" class="java.sql.Date">
 		<property name="com.jaspersoft.studio.field.name" value="launch_date"/>
 		<property name="com.jaspersoft.studio.field.label" value="launchDate"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="book"/>
 	</field>
-	<field name="price" class="java.math.BigDecimal">
+	<field name="price" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="price"/>
 		<property name="com.jaspersoft.studio.field.label" value="price"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="book"/>
