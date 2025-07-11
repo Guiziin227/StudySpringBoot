@@ -2,6 +2,7 @@ package com.github.guiziin227.restspringboot.dto;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,6 +35,8 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
 
     private String profileUrl;
     private String photoUrl;
+
+    @JsonIgnore
     private List<Book> books;
 
 
@@ -116,6 +119,7 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
         return books;
     }
 
+    @JsonIgnore
     public String getName() {
         return (firstName != null) ? firstName : "" + (lastName != null ? " " + lastName : "");
     }
