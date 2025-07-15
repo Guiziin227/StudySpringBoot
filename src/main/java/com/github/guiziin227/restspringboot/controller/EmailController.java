@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,8 +27,10 @@ public class EmailController implements EmailControllerDocs {
         return new ResponseEntity<>("Email sent", HttpStatus.OK);
     }
 
+    @PostMapping("/attach")
     @Override
-    public ResponseEntity<String> sendEmail(String emailRequestJSON, MultipartFile multipartFile) {
-        return null;
+    public ResponseEntity<String> sendEmailWithAttach(@RequestParam("emailRequest") String emailRequestJSON, @RequestParam("attach") MultipartFile multipartFile) {
+        emailService.sendWithAttachment(emailRequestJSON, multipartFile);
+        return new ResponseEntity<>("Email with attachment sent", HttpStatus.OK);
     }
 }
