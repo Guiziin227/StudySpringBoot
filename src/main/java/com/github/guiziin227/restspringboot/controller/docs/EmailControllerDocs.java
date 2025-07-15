@@ -1,12 +1,9 @@
 package com.github.guiziin227.restspringboot.controller.docs;
 
-import com.github.guiziin227.restspringboot.dto.PersonDTO;
 import com.github.guiziin227.restspringboot.dto.request.EmailRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
