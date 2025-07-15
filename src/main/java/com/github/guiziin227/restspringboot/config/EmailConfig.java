@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
