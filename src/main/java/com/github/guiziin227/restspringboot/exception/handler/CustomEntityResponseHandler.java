@@ -4,6 +4,7 @@ import com.github.guiziin227.restspringboot.exception.BadRequestException;
 import com.github.guiziin227.restspringboot.exception.ExceptionResponse;
 import com.github.guiziin227.restspringboot.exception.FileNotFoundException;
 import com.github.guiziin227.restspringboot.exception.FileStorageException;
+import com.github.guiziin227.restspringboot.exception.InvalidJwtAuthenticationException;
 import com.github.guiziin227.restspringboot.exception.RequiredObjectIsNullException;
 import com.github.guiziin227.restspringboot.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,16 @@ public class CustomEntityResponseHandler extends ResponseEntityExceptionHandler 
                 request.getDescription(false)
         );
         return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({InvalidJwtAuthenticationException.class})
+    public final ResponseEntity<ExceptionResponse> handleInvalidJwtAuthentication(Exception ex, WebRequest request) {
+        ExceptionResponse resp = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(resp, HttpStatus.FORBIDDEN);
     }
 
 
