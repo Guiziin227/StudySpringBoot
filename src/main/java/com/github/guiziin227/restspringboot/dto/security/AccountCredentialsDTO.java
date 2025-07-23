@@ -18,6 +18,7 @@ public class AccountCredentialsDTO implements Serializable {
 
     private String username;
     private String password;
+    private String fullName;
 
     @Override
     public boolean equals(Object o) {
