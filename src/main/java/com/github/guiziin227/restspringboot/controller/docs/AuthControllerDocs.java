@@ -18,5 +18,6 @@ public interface AuthControllerDocs {
     ResponseEntity<?> refreshToken(@PathVariable("username") String username,
                                    @RequestHeader("Authorization") String refreshToken);
 
+    @Operation(summary = "Create new account credentials")
     AccountCredentialsDTO create(@RequestBody AccountCredentialsDTO credentials);
 }
