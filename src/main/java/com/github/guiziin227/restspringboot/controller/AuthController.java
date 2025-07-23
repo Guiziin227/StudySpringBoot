@@ -1,5 +1,6 @@
 package com.github.guiziin227.restspringboot.controller;
 
+import com.github.guiziin227.restspringboot.controller.docs.AuthControllerDocs;
 import com.github.guiziin227.restspringboot.dto.security.AccountCredentialsDTO;
 import com.github.guiziin227.restspringboot.dto.security.TokenDTO;
 import com.github.guiziin227.restspringboot.service.AuthService;
@@ -20,13 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Authentication endpoints")
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthControllerDocs {
 
     @Autowired
     private AuthService authService;
 
     @Operation(summary = "Sign in to the application")
     @PostMapping("/signin")
+    @Override
     public ResponseEntity<TokenDTO> signin(@RequestBody AccountCredentialsDTO credentials) {
 
         if (credentials == null
@@ -47,8 +49,9 @@ public class AuthController {
 
     @Operation(summary = "Refresh the authentication token")
     @PutMapping("/refresh/{username}")
+    @Override
     public ResponseEntity<?> refreshToken(@PathVariable("username") String username,
-                                                 @RequestHeader("Authorization") String refreshToken) {
+                                          @RequestHeader("Authorization") String refreshToken) {
 
         if (parametersAreInvalid(username, refreshToken)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
@@ -65,4 +68,9 @@ public class AuthController {
                 || !refreshToken.startsWith("Bearer ");
     }
 
+    @PostMapping(value = "/createUser")
+    @Override
+    public AccountCredentialsDTO create(@RequestBody AccountCredentialsDTO credentials) {
+        return authService.create(credentials);
+    }
 }
