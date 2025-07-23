@@ -26,7 +26,6 @@ public class AuthController implements AuthControllerDocs {
     @Autowired
     private AuthService authService;
 
-    @Operation(summary = "Sign in to the application")
     @PostMapping("/signin")
     @Override
     public ResponseEntity<TokenDTO> signin(@RequestBody AccountCredentialsDTO credentials) {
@@ -47,7 +46,7 @@ public class AuthController implements AuthControllerDocs {
         return ResponseEntity.ok().body(token.getBody());
     }
 
-    @Operation(summary = "Refresh the authentication token")
+
     @PutMapping("/refresh/{username}")
     @Override
     public ResponseEntity<?> refreshToken(@PathVariable("username") String username,
